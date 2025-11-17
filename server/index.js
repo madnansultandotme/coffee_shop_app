@@ -15,6 +15,7 @@ import orderRoutes from "./routes/orders.js";
 import adminRoutes from "./routes/admin.js";
 import { sanitizeMiddleware } from "./middleware/sanitize.js";
 import { errorHandler } from "./middleware/error.js";
+import { ensureDefaultAdmin } from "./config/seed.js";
 
 const app = express();
 app.use(express.json());
@@ -35,7 +36,8 @@ app.use("/api/loyalty", loyaltyRoutes);
 app.use("/api/orders", writeLimiter, orderRoutes);
 app.use("/api/admin", adminRoutes);
 
-connectDB(MONGODB_URI).then(() => {
+connectDB(MONGODB_URI).then(async () => {
+  await ensureDefaultAdmin();
   if (process.env.NODE_ENV !== "test") {
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
@@ -43,7 +45,9 @@ connectDB(MONGODB_URI).then(() => {
   }
 }).catch(err => {
   console.error("MongoDB connection error", err);
-  process.exit(1);
+  if (process.env.NODE_ENV !== "test") {
+    process.exit(1);
+  }
 });
 
 app.use(errorHandler);

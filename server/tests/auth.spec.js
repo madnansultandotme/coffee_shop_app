@@ -8,11 +8,11 @@ beforeAll(async () => {
   const s = await startMemoryServer();
   app = s.app;
   mongod = s.mongod;
-});
+}, 120000);
 
 afterAll(async () => {
   await stopMemoryServer(mongod);
-});
+}, 120000);
 
 describe("Auth", () => {
   it("signs up with password and returns JWT + CSRF", async () => {

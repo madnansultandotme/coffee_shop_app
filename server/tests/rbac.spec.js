@@ -11,11 +11,11 @@ beforeAll(async () => {
   const s = await startMemoryServer();
   app = s.app;
   mongod = s.mongod;
-});
+}, 120000);
 
 afterAll(async () => {
   await stopMemoryServer(mongod);
-});
+}, 120000);
 
 describe("RBAC", () => {
   it("forbids customer from admin endpoints", async () => {

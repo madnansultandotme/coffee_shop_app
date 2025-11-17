@@ -14,13 +14,15 @@ export async function staff(req, res) {
 export async function updateUserRole(req, res) {
   const { role, isActive } = req.body;
   const userId = req.params.id;
-  let profile = await UserProfile.findOne({ userId });
+  const targetProfile = await UserProfile.findOne({ userId });
+  if (role === "admin") return res.status(403).json({ error: "Cannot assign admin role" });
+  if (targetProfile && targetProfile.role === "admin" && role !== "admin") return res.status(403).json({ error: "Cannot modify admin role" });
   const data = { role, permissions: permissionsForRole(role), isActive: isActive ?? true };
-  if (profile) {
-    Object.assign(profile, data);
-    await profile.save();
+  if (targetProfile) {
+    Object.assign(targetProfile, data);
+    await targetProfile.save();
   } else {
-    profile = await UserProfile.create({ userId, ...data });
+    await UserProfile.create({ userId, ...data });
   }
   return res.json({ ok: true });
 }
