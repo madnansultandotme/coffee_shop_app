@@ -1,29 +1,141 @@
-# Coffee Shop App
-  
-This is a project built with [Chef](https://chef.convex.dev) using [Convex](https://convex.dev) as its backend.
- You can find docs about Chef with useful information like how to deploy to production [here](https://docs.convex.dev/chef).
-  
-This project is connected to the Convex deployment named [`calculating-seahorse-374`](https://dashboard.convex.dev/d/calculating-seahorse-374).
-  
-## Project structure
-  
-The frontend code is in the `app` directory and is built with [Vite](https://vitejs.dev/).
-  
-The backend code is in the `convex` directory.
-  
-`npm run dev` will start the frontend and backend servers.
+# Coffee Shop Pro ☕
 
-## App authentication
+A full-featured coffee shop management application built with the MERN stack (MongoDB, Express.js, React, Node.js).
 
-Chef apps use [Convex Auth](https://auth.convex.dev/) with Anonymous auth for easy sign in. You may wish to change this before deploying your app.
+## Features
 
-## Developing and deploying your app
+- **Menu Management** - Browse items by category, search, filter by dietary preferences
+- **Shopping Cart** - Add items with size variants and special instructions
+- **Order Processing** - Place orders with promo codes and loyalty points
+- **Loyalty Program** - Earn and redeem points on purchases
+- **Role-Based Access** - Customer, Barista, Manager, and Admin roles
+- **Dark/Light Mode** - Theme toggle for user preference
 
-Check out the [Convex docs](https://docs.convex.dev/) for more information on how to develop with Convex.
-* If you're new to Convex, the [Overview](https://docs.convex.dev/understanding/) is a good place to start
-* Check out the [Hosting and Deployment](https://docs.convex.dev/production/) docs for how to deploy your app
-* Read the [Best Practices](https://docs.convex.dev/understanding/best-practices/) guide for tips on how to improve you app further
+## Tech Stack
 
-## HTTP API
+| Layer | Technologies |
+|-------|-------------|
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB with Mongoose |
+| Auth | JWT, bcryptjs |
+| Security | Helmet, CORS, Rate Limiting |
 
-User-defined http routes are defined in the `convex/router.ts` file. We split these routes into a separate file from `convex/http.ts` to allow us to prevent the LLM from modifying the authentication routes.
+## Project Structure
+
+```
+├── src/                    # React frontend
+│   ├── components/         # UI components
+│   ├── lib/               # Utilities and API helpers
+│   └── App.tsx            # Main application
+├── server/                 # Express backend
+│   ├── config/            # Database and environment config
+│   ├── controllers/       # Route handlers
+│   ├── middleware/        # Auth, error handling, sanitization
+│   ├── models/            # Mongoose schemas
+│   ├── routes/            # API route definitions
+│   └── utils/             # Helper functions
+└── docs/                   # Documentation
+    └── SRS.md             # Software Requirements Specification
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB instance (local or Atlas)
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd coffee-shop-pro
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Configure environment variables
+
+Create `.env.local` in root:
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+Create `server/.env`:
+```env
+MONGODB_URI=mongodb://localhost:27017/coffeeshop
+JWT_SECRET=your-secret-key
+PORT=3001
+CORS_ORIGIN=http://localhost:5173
+DEFAULT_ADMIN_EMAIL=admin@coffeeshop.com
+```
+
+4. Start development servers
+```bash
+npm run dev
+```
+
+This runs both frontend (http://localhost:5173) and backend (http://localhost:3001) concurrently.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start frontend and backend in development |
+| `npm run dev:frontend` | Start only Vite dev server |
+| `npm run dev:backend` | Start only Express server |
+| `npm run build` | Build frontend for production |
+| `npm run lint` | Run TypeScript and ESLint checks |
+| `npm test` | Run tests |
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/signin` - Sign in or sign up
+- `POST /api/auth/anonymous` - Guest login
+
+### Menu
+- `GET /api/menu/categories` - List categories
+- `GET /api/menu/items` - List menu items
+- `GET /api/menu/search?term=` - Search items
+
+### Cart
+- `GET /api/cart` - Get cart
+- `POST /api/cart` - Add to cart
+- `PATCH /api/cart/:id` - Update quantity
+- `DELETE /api/cart/:id` - Remove item
+
+### Orders
+- `GET /api/orders` - User's orders
+- `POST /api/orders` - Create order
+- `POST /api/orders/reorder` - Reorder previous
+
+### Loyalty
+- `GET /api/loyalty/summary` - Points balance
+- `GET /api/loyalty/transactions` - History
+
+## User Roles
+
+| Role | Capabilities |
+|------|-------------|
+| Customer | Browse menu, order, manage cart, view loyalty |
+| Barista | + View and update order status |
+| Manager | + Manage menu availability |
+| Admin | + User role management |
+
+## Test Accounts
+
+The app seeds a default admin account using the email specified in `DEFAULT_ADMIN_EMAIL`. Sign up with that email to get admin access.
+
+## Documentation
+
+See [docs/SRS.md](docs/SRS.md) for the complete Software Requirements Specification.
+
+## License
+
+MIT
